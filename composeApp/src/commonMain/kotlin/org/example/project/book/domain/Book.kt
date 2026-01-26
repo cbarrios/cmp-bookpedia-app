@@ -1,5 +1,7 @@
 package org.example.project.book.domain
 
+import kotlin.math.round
+
 data class Book(
     val id: String,
     val title: String,
@@ -12,4 +14,10 @@ data class Book(
     val ratingCount: Int?,
     val numPages: Int?,
     val numEditions: Int
-)
+) {
+
+    val averageRatingRounded: String?
+        get() = averageRating?.let {
+            "${round(it * 10) / 10.0}"
+        }
+}
