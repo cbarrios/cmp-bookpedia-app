@@ -10,7 +10,7 @@ fun BookDto.toBook(): Book {
         "https://covers.openlibrary.org/b/id/${coverAlternativeKey}-L.jpg"
     }
     return Book(
-        id = id,
+        id = id.substringAfterLast("/"),
         title = title,
         imageUrl = imageUrl,
         authors = authorNames ?: emptyList(),
