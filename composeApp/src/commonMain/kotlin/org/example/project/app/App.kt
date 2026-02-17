@@ -1,12 +1,7 @@
 package org.example.project.app
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -17,6 +12,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import org.example.project.book.ui.SelectedBookViewModel
+import org.example.project.book.ui.book_detail.BookDetailAction
+import org.example.project.book.ui.book_detail.BookDetailScreen
+import org.example.project.book.ui.book_detail.BookDetailViewModel
 import org.example.project.book.ui.book_list.BookListScreen
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -52,12 +50,17 @@ fun App() {
                         it.sharedKoinViewModel<SelectedBookViewModel>(navController)
                     val selectedBook =
                         selectedBookViewModel.selectedBook.collectAsStateWithLifecycle().value
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(text = "Book Id: ${selectedBook?.id}")
+                    val viewModel = koinViewModel<BookDetailViewModel>()
+                    LaunchedEffect(selectedBook) {
+                        selectedBook?.let {
+                            viewModel.onAction(BookDetailAction.OnSelectedBookChange(selectedBook))
+                        }
                     }
+                    BookDetailScreen(
+                        onBackClick = {
+                            navController.navigateUp()
+                        }
+                    )
                 }
             }
         }

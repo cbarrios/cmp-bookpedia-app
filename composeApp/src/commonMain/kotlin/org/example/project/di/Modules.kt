@@ -5,6 +5,7 @@ import org.example.project.book.data.network.RemoteBookDataSource
 import org.example.project.book.data.repository.DefaultBookRepository
 import org.example.project.book.domain.BookRepository
 import org.example.project.book.ui.SelectedBookViewModel
+import org.example.project.book.ui.book_detail.BookDetailViewModel
 import org.example.project.book.ui.book_list.BookListViewModel
 import org.example.project.core.data.HttpClientFactory
 import org.koin.core.module.Module
@@ -22,4 +23,5 @@ val sharedModule = module {
 
     viewModelOf(::BookListViewModel)
     viewModelOf(::SelectedBookViewModel)
+    viewModelOf(::BookDetailViewModel)
 }
