@@ -1,5 +1,7 @@
 package org.example.project.app
 
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,7 +32,14 @@ fun App() {
             navigation<Route.BookGraph>(
                 startDestination = Route.BookList
             ) {
-                composable<Route.BookList> {
+                composable<Route.BookList>(
+                    exitTransition = {
+                        slideOutHorizontally()
+                    },
+                    popEnterTransition = {
+                        slideInHorizontally()
+                    }
+                ) {
                     val selectedBookViewModel =
                         it.sharedKoinViewModel<SelectedBookViewModel>(navController)
                     LaunchedEffect(true) {
@@ -45,7 +54,18 @@ fun App() {
                         }
                     )
                 }
-                composable<Route.BookDetail> {
+                composable<Route.BookDetail>(
+                    enterTransition = {
+                        slideInHorizontally { initialOffset ->
+                            initialOffset
+                        }
+                    },
+                    exitTransition = {
+                        slideOutHorizontally { initialOffset ->
+                            initialOffset
+                        }
+                    }
+                ) {
                     val selectedBookViewModel =
                         it.sharedKoinViewModel<SelectedBookViewModel>(navController)
                     val selectedBook =
