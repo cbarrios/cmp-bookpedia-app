@@ -27,6 +27,7 @@ class BookListViewModel(
 
     private var cachedBooks = emptyList<Book>()
     private var searchJob: Job? = null
+    private var favoritesJob: Job? = null
 
     private val _state = MutableStateFlow(BookListState(isLoading = true))
     val state = _state
@@ -34,6 +35,7 @@ class BookListViewModel(
             if (cachedBooks.isEmpty()) {
                 observeSearchQuery()
             }
+            observeFavoriteBooks()
         }
         .stateIn(
             viewModelScope,
@@ -43,9 +45,7 @@ class BookListViewModel(
 
     fun onAction(action: BookListAction) {
         when (action) {
-            is BookListAction.OnBookClick -> {
-                // TODO
-            }
+            is BookListAction.OnBookClick -> Unit
 
             is BookListAction.OnSearchQueryChange -> {
                 _state.update {
@@ -58,7 +58,24 @@ class BookListViewModel(
                     it.copy(selectedTabIndex = action.index)
                 }
             }
+
+            BookListAction.OnAutomaticScrollAfterSearch -> {
+                _state.update {
+                    it.copy(shouldScroll = false)
+                }
+            }
         }
+    }
+
+    private fun observeFavoriteBooks() {
+        favoritesJob?.cancel()
+        favoritesJob = bookRepository.getFavoriteBooks()
+            .onEach { favoriteBooks ->
+                _state.update {
+                    it.copy(favoriteBooks = favoriteBooks)
+                }
+            }
+            .launchIn(viewModelScope)
     }
 
     @OptIn(FlowPreview::class)
@@ -99,7 +116,8 @@ class BookListViewModel(
                     it.copy(
                         isLoading = false,
                         errorMessage = null,
-                        searchResults = searchResults
+                        searchResults = searchResults,
+                        shouldScroll = true
                     )
                 }
             }
